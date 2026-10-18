@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestra canción</title>
+
+    <!-- Este es el ÚNICO CSS por ahora: lo mínimo para que se note la línea activa
+         y para que la letra tenga su propia caja con scroll. -->
+    <style>
+        #letra { height: 250px; overflow-y: auto; position: relative; }
+        .activa { font-weight: bold; font-size: 1.3em; }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="index.html">Volver</a>
+
+    <header>
+        <h1>Nuestra canción</h1>
+    </header>
+
+    <main>
+        <h2>Te Quiero Tanto</h2>
+        <p>Kevin Kaarl</p>
+
+        <!-- Ahora el audio lleva un id para que JavaScript lo encuentre -->
+        <audio id="audio" controls preload="metadata">
+            <source src="te_quiero_tanto.mp3" type="audio/mpeg">
+            Tu navegador no puede reproducir audio.
+        </audio>
+
+        <!-- Aquí JavaScript va a crear una línea <p> por cada verso -->
+        <div id="letra"></div>
+    </main>
+
+    <script>
+        // 1) LA LETRA CON SUS TIEMPOS
+        //    t = minuto:segundo en que EMPIEZA esa línea en la canción.
+        //    texto = lo que se muestra.
+        //    Agrega o borra líneas según necesites. Deben ir en orden de tiempo.
+        var letra = [
+            { t: "0:09.3", texto: "Nunca digas que te vas sin querer regresar" },
+            { t: "0:13.6", texto: "Cuando de ti me enamoré, cuando cien años ya te amé" },
+            { t: "0:19.7", texto: "Llévame siempre al recordar" },
+            { t: "0:24.9", texto: "Viéndote bailar en aquel cerro Coronel" },
+            { t: "0:29.1", texto: "Y ya mil veces te besé, y no lo niego, me clavé" },
+            { t: "0:35.1", texto: "Llévame siempre al recordar" },
+            { t: "0:40.9", texto: "Te he visto en frente, sonriente, valiente, te quiero tanto" },
+            { t: "0:51.3", texto: "Vestido blanco, en el medio tu alma, te quiero tanto" },
+            { t: "1:01.6", texto: "Me duele fuerte pensar que algún día te encuentre ausente" },
+            { t: "1:12.0", texto: "Me duele fuerte pensar que algún día te encuentre ausente" },
+            { t: "1:24.0", texto: "Te siento al cantar y al escuchar cualquier canción" },
+            { t: "1:28.5", texto: "Bonita que hable del amor, de lo que siento ayer y hoy" },
+            { t: "1:34.6", texto: "Siempre te llevo al despertar" },
+            { t: "1:42.4", texto: "Te vi a los ojos bien" },
+            { t: "1:49.9", texto: "Sentí cariño fiel" },
+            { t: "1:57.9", texto: "Si me rompiera aquí" },
+            { t: "2:05.6", texto: "Esperaría por ti" },
+            { t: "2:11.8", texto: "Te he visto en frente, sonriente, valiente, te quiero tanto" },
+            { t: "2:21.7", texto: "Vestido blanco, en el medio tu alma, te quiero tanto" },
+            { t: "2:32.0", texto: "Me duele fuerte pensar que algún día te encuentre ausente" },
+            { t: "2:42.3", texto: "Me duele fuerte pensar que algún día te encuentre ausente" },
+            { t: "3:25.7", texto: "Te vi a los ojos bien" },
+            { t: "3:33.3", texto: "Sentí cariño fiel" },
+            { t: "3:40.9", texto: "Si me rompiera aquí" },
+            { t: "3:48.8", texto: "Esperaría por ti" },
+            { t: "4:30.5", texto: "Uh-uh, uh, uh-uh, uh, uh-uh, uh-uh" },
+            { t: "4:39.8", texto: "Uh, uh-uh, uh, uh-uh, uh, uh-uh, uh-uh" },
+            { t: "4:47.2", texto: "Uh, uh-uh, uh, uh-uh, uh, uh-uh, uh-uh" },
+            { t: "4:55.6", texto: "Uh, uh-uh, uh, uh-uh, uh, uh-uh, uh-uh" },
+            { t: "5:03.4", texto: "Uh, uh-uh, uh, uh-uh, uh, uh-uh, uh-uh" },
+            { t: "5:11.5", texto: "Uh, uh-uh, uh, uh-uh, uh, uh-uh, uh-uh" }
+        ];
+
+        // 2) Convierte "1:05" en 65 segundos, porque el audio cuenta en segundos
+        function aSegundos(t) {
+            var partes = t.split(":");
+            return parseInt(partes[0]) * 60 + parseFloat(partes[1]);
+        }
+
+        // 3) Encontramos los elementos de la página
+        var audio = document.getElementById("audio");
+        var contenedor = document.getElementById("letra");
+
+        // 4) Creamos un <p> por cada línea de la letra
+        for (var i = 0; i < letra.length; i++) {
+            letra[i].seg = aSegundos(letra[i].t);
+            var p = document.createElement("p");
+            p.textContent = letra[i].texto;
+            contenedor.appendChild(p);
+        }
+
+        // 5) Mientras suena la canción, el navegador avisa varias veces por segundo
+        //    ("timeupdate"). En cada aviso buscamos qué línea toca ahora.
+        var actual = -1; // -1 = todavía ninguna
+
+        audio.addEventListener("timeupdate", function () {
+            var nueva = -1;
+            for (var i = 0; i < letra.length; i++) {
+                // La línea que toca es la última cuyo tiempo ya pasó
+                if (audio.currentTime >= letra[i].seg) {
+                    nueva = i;
+                }
+            }
+
+            // Solo hacemos cambios si la línea cambió
+            if (nueva !== actual) {
+                if (actual >= 0) {
+                    contenedor.children[actual].classList.remove("activa");
+                }
+                if (nueva >= 0) {
+                    var linea = contenedor.children[nueva];
+                    linea.classList.add("activa");
+                    // Movemos la caja para que la línea quede en el centro
+                    contenedor.scrollTop = linea.offsetTop - contenedor.clientHeight / 2;
+                }
+                actual = nueva;
+            }
+        });
+    </script>
+</body>
+</html>

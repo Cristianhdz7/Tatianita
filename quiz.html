@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="index.html">Volver</a>
+
+    <header>
+        <h1>¿Cuánto nos conocemos?</h1>
+    </header>
+
+    <form id="quiz">
+        <fieldset>
+            <legend>1. ¿Cuándo empezamos a hablar?</legend>
+
+            <input type="radio" name="p1" id="p1A" value="A">
+            <label for="p1A">27 de Agosto</label>
+            <br>
+            <input type="radio" name="p1" id="p1B" value="B">
+            <label for="p1B">21 de Agosto</label>
+            <br>
+            <input type="radio" name="p1" id="p1C" value="C">
+            <label for="p1C">25 de Agosto</label>
+            <br>
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend>2. ¿Qué día nos dimos nuestro primer beso?</legend>
+
+            <input type="radio" name="p2" id="p2A" value="A">
+            <label for="p2A">15 de Septiembre</label>
+            <br>
+            <input type="radio" name="p2" id="p2B" value="B">
+            <label for="p2B">14 de Septiembre</label>
+            <br>
+            <input type="radio" name="p2" id="p2C" value="C">
+            <label for="p2C">05 de Septiembre</label>
+            <br>
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend>3. ¿Qué día hablamos en persona?</legend>
+
+            <input type="radio" name="p3" id="p3A" value="A">
+            <label for="p3A">21 de Agosto</label>
+            <br>
+            <input type="radio" name="p3" id="p3B" value="B">
+            <label for="p3B">27 de Agosto</label>
+            <br>
+            <input type="radio" name="p3" id="p3C" value="C">
+            <label for="p3C">25 de Agosto</label>
+            <br>
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend>4. ¿Cuándo nos hicimos novios?</legend>
+
+            <input type="radio" name="p4" id="p4A" value="A">
+            <label for="p4A">14 de Septiembre</label>
+            <br>
+            <input type="radio" name="p4" id="p4B" value="B">
+            <label for="p4B">25 de Agosto</label>
+            <br>
+            <input type="radio" name="p4" id="p4C" value="C">
+            <label for="p4C">15 de Septiembre</label>
+            <br>
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend>5. ¿Cuándo empezamos a seguirnos en IG?</legend>
+
+            <input type="radio" name="p5" id="p5A" value="A">
+            <label for="p5A">27 de Agosto</label>
+            <br>
+            <input type="radio" name="p5" id="p5B" value="B">
+            <label for="p5B">21 de Agosto</label>
+            <br>
+            <input type="radio" name="p5" id="p5C" value="C">
+            <label for="p5C">25 de Agosto</label>
+            <br>
+        </fieldset>
+        <br>
+        <button type="button" id="btn-resultado">Ver resultado</button>
+    </form>
+
+    <!-- Aquí JavaScript escribirá el resultado -->
+    <p id="resultado"></p>
+
+    <script>
+        // 1) Las respuestas correctas. A la izquierda el name de la pregunta,
+        //    a la derecha el value de la opción correcta.
+        var correctas = {
+            p1: "C",
+            p2: "A",
+            p3: "B",
+            p4: "C",
+            p5: "B"
+        };
+
+        // 2) Buscamos en la página el botón y el párrafo del resultado por su id
+        var boton = document.getElementById("btn-resultado");
+        var resultado = document.getElementById("resultado");
+
+        // 3) Cuando alguien haga clic en el botón, se ejecuta esta función
+        boton.addEventListener("click", function () {
+            var aciertos = 0;
+            var contestadas = 0;
+
+            // Recorremos cada pregunta: p1, p2, p3, p4, p5
+            for (var pregunta in correctas) {
+                // Buscamos la opción marcada de esa pregunta (si hay alguna)
+                var elegida = document.querySelector('input[name="' + pregunta + '"]:checked');
+
+                if (elegida) {
+                    contestadas = contestadas + 1;
+                    // ¿Lo que eligió es igual a la respuesta correcta?
+                    if (elegida.value === correctas[pregunta]) {
+                        aciertos = aciertos + 1;
+                    }
+                }
+            }
+
+            // Si faltan preguntas, avisamos y no calculamos nada
+            if (contestadas < 5) {
+                resultado.textContent = "Te faltan preguntas por responder 😊";
+                return;
+            }
+
+            // Mensaje según cuántas acertó
+            var mensaje = "";
+            if (aciertos === 5) {
+                mensaje = "¡Perfecto! Te acuerdas de todo 💖";
+            } else if (aciertos >= 3) {
+                mensaje = "¡Muy bien! Casi lo sabes todo 💕";
+            } else {
+                mensaje = "Mmm... tenemos que repasar nuestras fechas 😅❤️";
+            }
+
+            resultado.textContent = "Acertaste " + aciertos + " de 5. " + mensaje;
+        });
+    </script>
+</body>
+</html>
